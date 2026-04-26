@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Patient Dashboard{% endblock %}
+{% block page_title %}My Health Dashboard{% endblock %}
+{% block content %}
+{% for appt in late_appointments %}
+<div class="notification-bar">
+  <i class="fas fa-bell fa-lg"></i>
+  <div>
+    <strong>Appointment Reminder!</strong> Your appointment with Dr. {{ appt.doctor.user.get_full_name }} 
+    is at {{ appt.appointment_time|time:"h:i A" }} today. Please be ready!
+  </div>
+</div>
+{% endfor %}
+<div class="row g-4 mb-4">
+  <div class="col-md-4"><div class="stat-card bg-blue"><div class="icon"><i class="fas fa-calendar"></i></div><p>Total Appointments</p><h3>{{ appointments.count }}</h3></div></div>
+  <div class="col-md-4"><div class="stat-card bg-green"><div class="icon"><i class="fas fa-calendar-check"></i></div><p>Upcoming</p><h3>{{ upcoming.count }}</h3></div></div>
+  <div class="col-md-4"><div class="stat-card bg-orange"><div class="icon"><i class="fas fa-prescription"></i></div><p>Prescriptions</p><h3>{{ prescriptions.count }}</h3></div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-calendar me-2 text-primary"></i>My Appointments</span>
+        <a href="{% url 'book_appointment' %}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Book New</a>
+      </div>
+      <div class="card-body p-0"><div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Doctor</th><th>Date</th><th>Time</th><th>Queue</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            {% for a in appointments %}
+            <tr>
+              <td><div class="fw-500">Dr. {{ a.doctor.user.get_full_name }}</div><div class="text-muted small">{{ a.doctor.specialization }}</div></td>
+              <td>{{ a.appointment_date }}</td>
+              <td>{{ a.appointment_time|time:"h:i A" }}</td>
+              <td><span class="badge bg-secondary">#{{ a.queue_number|default:"-" }}</span></td>
+              <td><span class="badge badge-{{ a.status }}">{{ a.status|title }}</span></td>
+              <td>{% if a.status == 'pending' or a.status == 'confirmed' %}
+                <a href="{% url 'cancel_appointment' a.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this appointment?')"><i class="fas fa-times"></i></a>
+              {% endif %}</td>
+            </tr>
+            {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No appointments yet. <a href="{% url 'book_appointment' %}">Book one!</a></td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><i class="fas fa-prescription me-2 text-primary"></i>My Prescriptions</div>
+      <div class="card-body p-0"><div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Doctor</th><th>Diagnosis</th><th>Medicines</th><th>Date</th></tr></thead>
+          <tbody>
+            {% for p in prescriptions %}
+            <tr>
+              <td>Dr. {{ p.doctor.user.get_full_name }}</td>
+              <td>{{ p.diagnosis|truncatechars:50 }}</td>
+              <td class="small text-muted">{{ p.medicines|truncatechars:60 }}</td>
+              <td class="small">{{ p.created_at|date:"d M Y" }}</td>
+            </tr>
+            {% empty %}<tr><td colspan="4" class="text-center text-muted py-4">No prescriptions yet</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body text-center py-4">
+        <div class="avatar mx-auto mb-3" style="width:60px;height:60px;font-size:24px;background:#34a853;">{{ patient.user.first_name|first }}{{ patient.user.last_name|first }}</div>
+        <h6 class="fw-600">{{ patient.user.get_full_name }}</h6>
+        <p class="text-muted small mb-1">Age {{ patient.age }} · {{ patient.gender }}</p>
+        <p class="text-muted small mb-2">{{ patient.phone }}</p>
+        <span class="badge bg-danger me-1">{{ patient.blood_group|default:"N/A" }}</span>
+        <a href="{% url 'my_profile' %}" class="btn btn-sm btn-outline-primary mt-3 d-block">Edit Profile</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><i class="fas fa-calendar-check me-2 text-success"></i>Upcoming</div>
+      <div class="card-body p-0">
+        {% for a in upcoming|slice:":5" %}
+        <div class="px-3 py-2 border-bottom">
+          <div class="fw-500 small">Dr. {{ a.doctor.user.get_full_name }}</div>
+          <div class="text-muted" style="font-size:11px;">{{ a.appointment_date }} at {{ a.appointment_time|time:"h:i A" }}</div>
+          <span class="badge badge-{{ a.priority }}" style="font-size:10px;">{{ a.priority|title }}</span>
+        </div>
+        {% empty %}<p class="text-center text-muted py-3 small">No upcoming appointments</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

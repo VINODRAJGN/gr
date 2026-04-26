@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Appointment Detail{% endblock %}
+{% block page_title %}Appointment Detail{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+  <div class="card">
+    <div class="card-header"><i class="fas fa-calendar-check me-2 text-primary"></i>Appointment #{{ appointment.id }}</div>
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-4">Patient</dt><dd class="col-sm-8">{{ appointment.patient.user.get_full_name }}</dd>
+        <dt class="col-sm-4">Doctor</dt><dd class="col-sm-8">Dr. {{ appointment.doctor.user.get_full_name }}</dd>
+        <dt class="col-sm-4">Date</dt><dd class="col-sm-8">{{ appointment.appointment_date }}</dd>
+        <dt class="col-sm-4">Time</dt><dd class="col-sm-8">{{ appointment.appointment_time|time:"h:i A" }}</dd>
+        <dt class="col-sm-4">Priority</dt><dd class="col-sm-8"><span class="badge badge-{{ appointment.priority }}">{{ appointment.priority|title }}</span></dd>
+        <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge badge-{{ appointment.status }}">{{ appointment.status|title }}</span></dd>
+        <dt class="col-sm-4">Reason</dt><dd class="col-sm-8">{{ appointment.reason|default:"-" }}</dd>
+        <dt class="col-sm-4">Notes</dt><dd class="col-sm-8">{{ appointment.notes|default:"-" }}</dd>
+        <dt class="col-sm-4">Queue #</dt><dd class="col-sm-8">{{ appointment.queue_number|default:"-" }}</dd>
+      </dl>
+    </div>
+    <div class="card-footer"><a href="javascript:history.back()" class="btn btn-light">Back</a></div>
+  </div>
+</div></div>
+{% endblock %}

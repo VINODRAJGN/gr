@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Doctor Dashboard{% endblock %}
+{% block page_title %}Doctor Dashboard{% endblock %}
+{% block content %}
+<div class="row g-4 mb-4">
+  <div class="col-md-4"><div class="stat-card bg-blue"><div class="icon"><i class="fas fa-calendar-day"></i></div><p>Today's Appointments</p><h3>{{ today_appointments.count }}</h3></div></div>
+  <div class="col-md-4"><div class="stat-card bg-green"><div class="icon"><i class="fas fa-procedures"></i></div><p>Total Patients</p><h3>{{ total_patients }}</h3></div></div>
+  <div class="col-md-4"><div class="stat-card bg-orange"><div class="icon"><i class="fas fa-prescription"></i></div><p>Prescriptions Issued</p><h3>{{ prescriptions.count }}</h3></div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-calendar-day me-2 text-primary"></i>Today's Schedule</div>
+      <div class="card-body p-0"><div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>#</th><th>Patient</th><th>Time</th><th>Reason</th><th>Priority</th><th>Actions</th></tr></thead>
+          <tbody>
+            {% for a in today_appointments %}
+            <tr>
+              <td><span class="badge bg-secondary">{{ a.queue_number }}</span></td>
+              <td><div class="fw-500">{{ a.patient.user.get_full_name }}</div><div class="text-muted small">{{ a.patient.gender }} · Age {{ a.patient.age }}</div></td>
+              <td>{{ a.appointment_time|time:"h:i A" }}</td>
+              <td class="small">{{ a.reason|truncatechars:40|default:"-" }}</td>
+              <td><span class="badge badge-{{ a.priority }}">{{ a.priority|title }}</span></td>
+              <td class="d-flex gap-1">
+                <form method="post" action="{% url 'update_appointment_status' a.id %}">{% csrf_token %}
+                  <input type="hidden" name="status" value="completed">
+                  <button type="submit" class="btn btn-xs btn-sm btn-outline-success" title="Mark Complete"><i class="fas fa-check"></i></button>
+                </form>
+                <a href="{% url 'add_prescription_for_appt' a.id %}" class="btn btn-xs btn-sm btn-outline-primary" title="Add Prescription"><i class="fas fa-prescription"></i></a>
+              </td>
+            </tr>
+            {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No appointments today</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <span><i class="fas fa-calendar me-2 text-primary"></i>Upcoming Appointments</span>
+      </div>
+      <div class="card-body p-0"><div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Patient</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for a in upcoming %}
+            <tr>
+              <td>{{ a.patient.user.get_full_name }}</td>
+              <td>{{ a.appointment_date }}</td>
+              <td>{{ a.appointment_time|time:"h:i A" }}</td>
+              <td><span class="badge badge-{{ a.status }}">{{ a.status|title }}</span></td>
+            </tr>
+            {% empty %}<tr><td colspan="4" class="text-center text-muted py-4">No upcoming appointments</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-prescription me-2 text-primary"></i>Recent Prescriptions</span>
+        <a href="{% url 'add_prescription' %}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i></a>
+      </div>
+      <div class="card-body p-0">
+        {% for p in prescriptions %}
+        <div class="px-3 py-2 border-bottom">
+          <div class="fw-500 small">{{ p.patient.user.get_full_name }}</div>
+          <div class="text-muted" style="font-size:11px;">{{ p.diagnosis|truncatechars:50 }}</div>
+          <div class="text-muted" style="font-size:11px;">{{ p.created_at|date:"d M Y" }}</div>
+        </div>
+        {% empty %}<p class="text-center text-muted py-3 small">No prescriptions yet</p>{% endfor %}
+      </div>
+      <div class="card-footer"><a href="{% url 'prescription_list' %}" class="btn btn-sm btn-outline-primary w-100">View All</a></div>
+    </div>
+    <div class="card">
+      <div class="card-body text-center py-4">
+        <div class="avatar mx-auto mb-3" style="width:60px;height:60px;font-size:24px;">{{ doctor.user.first_name|first }}{{ doctor.user.last_name|first }}</div>
+        <h6 class="fw-600">Dr. {{ doctor.user.get_full_name }}</h6>
+        <p class="text-muted small mb-1">{{ doctor.specialization }}</p>
+        <p class="text-muted small">{{ doctor.qualification }}</p>
+        <div class="badge bg-light text-dark">{{ doctor.experience_years }} years experience</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

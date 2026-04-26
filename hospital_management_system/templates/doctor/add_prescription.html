@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Add Prescription{% endblock %}
+{% block page_title %}New Prescription{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-8">
+  <div class="card">
+    <div class="card-header"><i class="fas fa-prescription me-2 text-primary"></i>Create Prescription</div>
+    <div class="card-body">
+      <form method="post">{% csrf_token %}
+        {% if appointment %}
+        <input type="hidden" name="patient_id" value="{{ appointment.patient.id }}">
+        <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+        <div class="alert alert-info small"><i class="fas fa-info-circle me-1"></i>
+          Prescription for: <strong>{{ appointment.patient.user.get_full_name }}</strong> — Appointment on {{ appointment.appointment_date }} at {{ appointment.appointment_time|time:"h:i A" }}
+        </div>
+        {% else %}
+        <div class="mb-3"><label class="form-label">Select Patient *</label>
+          <select name="patient_id" class="form-select" required>
+            <option value="">Choose patient...</option>
+            {% for p in patients %}<option value="{{ p.id }}">{{ p.user.get_full_name }}</option>{% endfor %}
+          </select>
+        </div>
+        {% endif %}
+        <div class="mb-3"><label class="form-label">Diagnosis *</label><textarea name="diagnosis" class="form-control" rows="3" required placeholder="Enter diagnosis..."></textarea></div>
+        <div class="mb-3"><label class="form-label">Medicines *</label><textarea name="medicines" class="form-control" rows="4" required placeholder="Medicine name, dosage, frequency..."></textarea></div>
+        <div class="mb-3"><label class="form-label">Instructions</label><textarea name="instructions" class="form-control" rows="3" placeholder="Special instructions, dietary advice..."></textarea></div>
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-1"></i>Save Prescription</button>
+          <a href="{% url 'doctor_dashboard' %}" class="btn btn-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

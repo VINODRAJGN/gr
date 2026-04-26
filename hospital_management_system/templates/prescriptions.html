@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Prescriptions{% endblock %}
+{% block page_title %}Prescriptions{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span><i class="fas fa-prescription me-2 text-primary"></i>All Prescriptions ({{ prescriptions.count }})</span>
+  </div>
+  <div class="card-body p-0"><div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Patient</th><th>Doctor</th><th>Diagnosis</th><th>Medicines</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for p in prescriptions %}
+        <tr>
+          <td class="fw-500">{{ p.patient.user.get_full_name }}</td>
+          <td>Dr. {{ p.doctor.user.get_full_name }}</td>
+          <td>{{ p.diagnosis|truncatechars:60 }}</td>
+          <td class="small text-muted">{{ p.medicines|truncatechars:60 }}</td>
+          <td class="small">{{ p.created_at|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}<tr><td colspan="5" class="text-center text-muted py-4">No prescriptions found</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div></div>
+</div>
+{% endblock %}

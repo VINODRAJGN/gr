@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}MediCare HMS - Home{% endblock %}
+{% block public_content %}
+<nav class="navbar navbar-expand-lg" style="background:linear-gradient(90deg,#0d2137,#1a3a5c);padding:14px 40px;">
+  <a class="navbar-brand text-white fw-700" href="/"><i class="fas fa-hospital-alt me-2"></i>MediCare HMS</a>
+  <div class="ms-auto d-flex gap-2">
+    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">Login</a>
+    <a href="{% url 'register' %}" class="btn btn-light btn-sm fw-600">Register</a>
+  </div>
+</nav>
+<div style="background:linear-gradient(135deg,#0d2137 0%,#1a3a5c 100%);min-height:85vh;display:flex;align-items:center;">
+  <div class="container text-center text-white py-5">
+    <div class="mb-4"><i class="fas fa-hospital-alt" style="font-size:4rem;opacity:.9;"></i></div>
+    <h1 class="display-4 fw-700 mb-3">Welcome to MediCare HMS</h1>
+    <p class="lead mb-5" style="opacity:.85;max-width:600px;margin:0 auto 40px;">A comprehensive hospital management system for patients, doctors, and administrators.</p>
+    <div class="row justify-content-center g-4 mb-5">
+      <div class="col-md-3"><div class="p-4 rounded-3" style="background:rgba(255,255,255,.1);">
+        <i class="fas fa-user-md fa-2x mb-2"></i><h3 class="fw-700">{{ total_doctors }}</h3><p class="mb-0">Active Doctors</p>
+      </div></div>
+      <div class="col-md-3"><div class="p-4 rounded-3" style="background:rgba(255,255,255,.1);">
+        <i class="fas fa-procedures fa-2x mb-2"></i><h3 class="fw-700">{{ total_patients }}</h3><p class="mb-0">Patients</p>
+      </div></div>
+      <div class="col-md-3"><div class="p-4 rounded-3" style="background:rgba(255,255,255,.1);">
+        <i class="fas fa-calendar-check fa-2x mb-2"></i><h3 class="fw-700">{{ total_appointments }}</h3><p class="mb-0">Appointments</p>
+      </div></div>
+    </div>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5 fw-600">Get Started</a>
+      <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-5">Login</a>
+    </div>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row g-4 text-center">
+    <div class="col-md-4"><div class="card h-100 p-4"><i class="fas fa-calendar-plus fa-3x text-primary mb-3"></i><h5 class="fw-600">Easy Booking</h5><p class="text-muted">Patients can easily book appointments with their preferred doctor.</p></div></div>
+    <div class="col-md-4"><div class="card h-100 p-4"><i class="fas fa-bell fa-3x text-warning mb-3"></i><h5 class="fw-600">Smart Notifications</h5><p class="text-muted">Automatic reminders 30 minutes before appointments to reduce no-shows.</p></div></div>
+    <div class="col-md-4"><div class="card h-100 p-4"><i class="fas fa-prescription fa-3x text-success mb-3"></i><h5 class="fw-600">Digital Prescriptions</h5><p class="text-muted">Doctors create digital prescriptions accessible anytime by patients.</p></div></div>
+  </div>
+</div>
+{% endblock %}

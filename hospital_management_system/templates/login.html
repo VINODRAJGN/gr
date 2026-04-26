@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Login - MediCare HMS{% endblock %}
+{% block public_content %}
+<div style="min-height:100vh;background:linear-gradient(135deg,#0d2137,#1a3a5c);display:flex;align-items:center;justify-content:center;">
+  <div style="width:100%;max-width:420px;padding:20px;">
+    <div class="text-center mb-4"><a href="/" style="color:#fff;text-decoration:none;"><i class="fas fa-hospital-alt fa-3x mb-2 d-block"></i><h4 class="fw-700">MediCare HMS</h4></a></div>
+    {% for msg in messages %}
+    <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags }}{% endif %} alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    {% endfor %}
+    <div class="card p-4">
+      <h5 class="fw-600 mb-4 text-center">Sign In</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3"><label class="form-label fw-500">Username</label>
+          <div class="input-group"><span class="input-group-text"><i class="fas fa-user"></i></span>
+          <input type="text" name="username" class="form-control" placeholder="Enter username" required autofocus></div></div>
+        <div class="mb-4"><label class="form-label fw-500">Password</label>
+          <div class="input-group"><span class="input-group-text"><i class="fas fa-lock"></i></span>
+          <input type="password" name="password" class="form-control" placeholder="Enter password" required></div></div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-600">Sign In</button>
+      </form>
+      <hr><p class="text-center mb-0 text-muted small">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+    </div>
+    <p class="text-center mt-3" style="color:rgba(255,255,255,.6);font-size:12px;">Default admin: <strong style="color:#fff;">admin / admin123</strong></p>
+  </div>
+</div>
+{% endblock %}

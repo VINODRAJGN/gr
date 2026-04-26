@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Book Appointment{% endblock %}
+{% block page_title %}Book an Appointment{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+  <div class="card">
+    <div class="card-header"><i class="fas fa-calendar-plus me-2 text-primary"></i>Book Appointment</div>
+    <div class="card-body">
+      <form method="post">{% csrf_token %}
+        <div class="mb-3"><label class="form-label">Select Doctor *</label>
+          <select name="doctor" class="form-select" required onchange="updateInfo(this)">
+            <option value="">Choose a doctor...</option>
+            {% for d in doctors %}<option value="{{ d.id }}" data-spec="{{ d.specialization }}" data-avail="{{ d.available_from|time:'h:i A' }} - {{ d.available_to|time:'h:i A' }}">Dr. {{ d.user.get_full_name }} — {{ d.specialization }}</option>{% endfor %}
+          </select>
+          <div id="doctorInfo" class="mt-2 small text-muted"></div>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Appointment Date *</label><input type="date" name="appointment_date" class="form-control" required min="{{ today }}"></div>
+          <div class="col-md-6"><label class="form-label">Appointment Time *</label><input type="time" name="appointment_time" class="form-control" required></div>
+        </div>
+        <div class="mb-3 mt-3"><label class="form-label">Priority</label>
+          <select name="priority" class="form-select">
+            <option value="low">Low</option><option value="normal" selected>Normal</option><option value="high">High</option><option value="emergency">Emergency</option>
+          </select>
+        </div>
+        <div class="mb-3"><label class="form-label">Reason for Visit</label><textarea name="reason" class="form-control" rows="3" placeholder="Describe your symptoms or reason..."></textarea></div>
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary px-4"><i class="fas fa-calendar-check me-1"></i>Book Appointment</button>
+          <a href="{% url 'patient_dashboard' %}" class="btn btn-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div></div>
+<script>
+var today = new Date().toISOString().split('T')[0];
+document.querySelector('[name="appointment_date"]').min = today;
+function updateInfo(sel){
+  var opt = sel.options[sel.selectedIndex];
+  if(opt.value) document.getElementById('doctorInfo').innerHTML = '<i class="fas fa-clock me-1"></i>Available: '+opt.dataset.avail;
+  else document.getElementById('doctorInfo').innerHTML='';
+}
+</script>
+{% endblock %}
