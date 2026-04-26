@@ -33,7 +33,7 @@
           <div class="col-md-4"><label class="form-label">Blood Group</label>
             <select name="blood_group" class="form-select"><option value="">-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
         </div>
-        <div id="doctorFields" class="row g-3 mt-1" style="display:none!important;">
+        <div id="doctorFields" class="row g-3 mt-1" style="display:none;">
           <div class="col-md-6"><label class="form-label">Specialization</label>
             <select name="specialization" class="form-select"><option value="">Select existing</option>{% for s in specializations %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
           <div class="col-md-6"><label class="form-label">Or Add New Specialization</label><input type="text" name="new_specialization" class="form-control" placeholder="e.g. Cardiology"></div>
@@ -49,8 +49,8 @@
 <script>
 function toggleFields(){
   var r=document.getElementById('roleSelect').value;
-  document.getElementById('patientFields').style.display=r==='patient'?'':'none';
-  document.getElementById('doctorFields').style.display=r==='doctor'?'':'none';
+  document.getElementById('patientFields').style.display=r==='patient'?'flex':'none';
+  document.getElementById('doctorFields').style.display=r==='doctor'?'flex':'none';
 }
 toggleFields();
 </script>

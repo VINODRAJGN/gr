@@ -18,7 +18,7 @@
       <div class="col-md-3"><label class="form-label small">Filter by Doctor</label>
         <select name="doctor" class="form-select form-select-sm">
           <option value="">All Doctors</option>
-          {% for d in doctors %}<option value="{{ d.id }}">Dr. {{ d.user.get_full_name }}</option>{% endfor %}
+          {% for d in doctors %}<option value="{{ d.id }}" {% if doctor_filter == d.id|stringformat:"s" %}selected{% endif %}>Dr. {{ d.user.get_full_name }}</option>{% endfor %}
         </select>
       </div>
       <div class="col-md-3"><button type="submit" class="btn btn-primary btn-sm w-100">Filter</button></div>

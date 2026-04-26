@@ -19,6 +19,10 @@
           <div class="col-md-6"><label class="form-label">Available From</label><input type="time" name="available_from" class="form-control" value="{{ doctor.available_from|time:'H:i' }}"></div>
           <div class="col-md-6"><label class="form-label">Available To</label><input type="time" name="available_to" class="form-control" value="{{ doctor.available_to|time:'H:i' }}"></div>
           <div class="col-12"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2">{{ doctor.address }}</textarea></div>
+          <div class="col-12"><div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" value="on" {% if doctor.is_active %}checked{% endif %}>
+            <label class="form-check-label" for="isActive">Active (available for appointments)</label>
+          </div></div>
         </div>
         <div class="d-flex gap-2 mt-4">
           <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-1"></i>Update Doctor</button>

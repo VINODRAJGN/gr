@@ -35,7 +35,9 @@
               <td><span class="badge bg-secondary">#{{ a.queue_number|default:"-" }}</span></td>
               <td><span class="badge badge-{{ a.status }}">{{ a.status|title }}</span></td>
               <td>{% if a.status == 'pending' or a.status == 'confirmed' %}
-                <a href="{% url 'cancel_appointment' a.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this appointment?')"><i class="fas fa-times"></i></a>
+                <form method="post" action="{% url 'cancel_appointment' a.id %}" style="display:inline;">{% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this appointment?')"><i class="fas fa-times"></i></button>
+                </form>
               {% endif %}</td>
             </tr>
             {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No appointments yet. <a href="{% url 'book_appointment' %}">Book one!</a></td></tr>{% endfor %}

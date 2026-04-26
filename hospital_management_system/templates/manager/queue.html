@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Appointment Queue{% endblock %}
-{% block page_title %}Today's Queue — {{ today }}</div>{% endblock %}
+{% block page_title %}Today's Queue — {{ today }}{% endblock %}
 {% block content %}
 {% for appt in late_notifications %}
 <div class="notification-bar">
@@ -14,7 +14,7 @@
       <div class="col-md-4"><label class="form-label small">Filter by Doctor</label>
         <select name="doctor" class="form-select form-select-sm" onchange="this.form.submit()">
           <option value="">All Doctors</option>
-          {% for d in doctors %}<option value="{{ d.id }}">Dr. {{ d.user.get_full_name }}</option>{% endfor %}
+          {% for d in doctors %}<option value="{{ d.id }}" {% if doctor_filter == d.id|stringformat:"s" %}selected{% endif %}>Dr. {{ d.user.get_full_name }}</option>{% endfor %}
         </select>
       </div>
       <div class="col-md-2"><a href="{% url 'appointment_queue' %}" class="btn btn-outline-secondary btn-sm w-100 mt-4">Reset</a></div>

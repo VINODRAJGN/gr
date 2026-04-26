@@ -16,6 +16,7 @@ def book_appointment(request):
         messages.error(request, 'Only patients can book appointments.')
         return redirect('home')
     doctors = Doctor.objects.filter(is_active=True).select_related('user','specialization')
+    today = date.today()
     if request.method == 'POST':
         doctor_id = request.POST.get('doctor')
         appt_date = request.POST.get('appointment_date')
@@ -24,12 +25,12 @@ def book_appointment(request):
         priority = request.POST.get('priority', 'normal')
         if not doctor_id or not appt_date or not appt_time:
             messages.error(request, 'Please fill all required fields.')
-            return render(request, 'patient/book_appointment.html', {'doctors': doctors})
+            return render(request, 'patient/book_appointment.html', {'doctors': doctors, 'today': today})
         doctor = get_object_or_404(Doctor, pk=doctor_id)
         # Check if already booked
         if Appointment.objects.filter(doctor=doctor, appointment_date=appt_date, appointment_time=appt_time, status__in=['pending','confirmed']).exists():
             messages.error(request, 'This time slot is already booked. Please choose another.')
-            return render(request, 'patient/book_appointment.html', {'doctors': doctors})
+            return render(request, 'patient/book_appointment.html', {'doctors': doctors, 'today': today})
         # Assign queue number for same day
         same_day_count = Appointment.objects.filter(doctor=doctor, appointment_date=appt_date).count()
         appt = Appointment.objects.create(
@@ -40,7 +41,7 @@ def book_appointment(request):
         )
         messages.success(request, f'Appointment booked! Queue number: {appt.queue_number}')
         return redirect('patient_dashboard')
-    return render(request, 'patient/book_appointment.html', {'doctors': doctors})
+    return render(request, 'patient/book_appointment.html', {'doctors': doctors, 'today': today})
 
 @login_required
 def appointment_list(request):
@@ -67,6 +68,7 @@ def appointment_list(request):
         'doctors': doctors,
         'status_filter': status_filter,
         'date_filter': date_filter,
+        'doctor_filter': doctor_filter,
         'status_choices': Appointment.STATUS_CHOICES,
     })
 
@@ -99,9 +101,10 @@ def cancel_appointment(request, pk):
     if not (is_patient or is_admin):
         messages.error(request, 'Access denied.')
         return redirect('home')
-    appt.status = 'cancelled'
-    appt.save()
-    messages.success(request, 'Appointment cancelled.')
+    if request.method == 'POST':
+        appt.status = 'cancelled'
+        appt.save()
+        messages.success(request, 'Appointment cancelled.')
     return redirect('patient_dashboard' if is_patient else 'appointment_list')
 
 @login_required
@@ -132,7 +135,7 @@ def schedule_appointment(request):
         messages.success(request, 'Appointment scheduled.')
         return redirect('appointment_list')
     return render(request, 'manager/schedule.html', {'doctors': doctors, 'patients': patients,
-        'priority_choices': Appointment.PRIORITY_CHOICES})
+        'priority_choices': Appointment.PRIORITY_CHOICES, 'today': date.today()})
 
 @login_required
 def appointment_queue(request):
@@ -157,6 +160,7 @@ def appointment_queue(request):
     return render(request, 'manager/queue.html', {
         'appointments': appointments,
         'doctors': doctors,
+        'doctor_filter': doctor_filter,
         'late_notifications': late_notifications,
         'today': today,
     })

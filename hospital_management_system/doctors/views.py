@@ -76,6 +76,7 @@ def edit_doctor(request, pk):
         spec_id = request.POST.get('specialization')
         if spec_id:
             doctor.specialization = Specialization.objects.filter(id=spec_id).first()
+        doctor.is_active = 'is_active' in request.POST
         doctor.save()
         doctor.user.first_name = request.POST.get('first_name', doctor.user.first_name)
         doctor.user.last_name = request.POST.get('last_name', doctor.user.last_name)
@@ -145,7 +146,7 @@ def prescription_list(request):
     except Doctor.DoesNotExist:
         # Could be admin or patient
         profile = UserProfile.objects.filter(user=request.user).first()
-        if profile and profile.role == 'admin' or request.user.is_superuser:
+        if (profile and profile.role == 'admin') or request.user.is_superuser:
             prescriptions = Prescription.objects.select_related('patient__user','doctor__user').order_by('-created_at')
         elif hasattr(request.user, 'patient_profile'):
             prescriptions = Prescription.objects.filter(patient=request.user.patient_profile).select_related('doctor__user').order_by('-created_at')

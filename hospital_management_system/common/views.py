@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count
 from patients.models import Patient
-from doctors.models import Doctor, Prescription
+from doctors.models import Doctor, Prescription, Specialization
 from appointments.models import Appointment
 from .models import UserProfile
 from datetime import date, datetime, timedelta
@@ -36,13 +36,13 @@ def register_view(request):
 
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'specializations': Specialization.objects.all()})
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already taken.')
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'specializations': Specialization.objects.all()})
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Email already registered.')
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'specializations': Specialization.objects.all()})
 
         user = User.objects.create_user(
             username=username, email=email, password=password,
@@ -59,9 +59,13 @@ def register_view(request):
                 blood_group=blood_group, phone=phone, address=address
             )
         elif role == 'doctor':
-            from doctors.models import Specialization
             spec_id = request.POST.get('specialization')
-            spec = Specialization.objects.filter(id=spec_id).first()
+            spec_new = request.POST.get('new_specialization', '').strip()
+            spec = None
+            if spec_new:
+                spec, _ = Specialization.objects.get_or_create(name=spec_new)
+            elif spec_id:
+                spec = Specialization.objects.filter(id=spec_id).first()
             exp = request.POST.get('experience_years', 0)
             qual = request.POST.get('qualification', '')
             Doctor.objects.create(
@@ -71,7 +75,6 @@ def register_view(request):
 
         messages.success(request, 'Registration successful! Please login.')
         return redirect('login')
-    from doctors.models import Specialization
     specializations = Specialization.objects.all()
     return render(request, 'register.html', {'specializations': specializations})
 

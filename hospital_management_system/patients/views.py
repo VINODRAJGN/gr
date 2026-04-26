@@ -62,6 +62,7 @@ def edit_patient(request, pk):
         patient.phone = request.POST.get('phone', patient.phone)
         patient.address = request.POST.get('address', patient.address)
         patient.emergency_contact = request.POST.get('emergency_contact', patient.emergency_contact)
+        patient.medical_history = request.POST.get('medical_history', patient.medical_history)
         patient.save()
         patient.user.first_name = request.POST.get('first_name', patient.user.first_name)
         patient.user.last_name = request.POST.get('last_name', patient.user.last_name)
